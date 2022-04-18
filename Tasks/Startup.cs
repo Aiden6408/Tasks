@@ -1,17 +1,10 @@
- using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using MySqlConnector;
 using Tasks.Repositories;
@@ -42,10 +35,16 @@ namespace Tasks
             
             services.AddScoped<AccountsRepository>();
             services.AddScoped<AccountService>();
+              services.AddTransient<ListsRepository>();
+      services.AddTransient<TasksRepository>();
+      services.AddTransient<ListsService>();
+      services.AddTransient<TasksService>();
+
         }
 
         private void ConfigureCors(IServiceCollection services)
-        {
+        { 
+            
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsDevPolicy", builder =>
@@ -60,9 +59,9 @@ namespace Tasks
                 });
             });
         }
-
         private void ConfigureAuth(IServiceCollection services)
         {
+           
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -71,6 +70,8 @@ namespace Tasks
             {
                 options.Authority = $"https://{Configuration["AUTH0_DOMAIN"]}/";
                 options.Audience = Configuration["AUTH0_AUDIENCE"];
+               
+                
             });
 
         }
